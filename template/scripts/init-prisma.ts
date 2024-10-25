@@ -2,22 +2,33 @@ import * as fs from 'fs';
 import * as path from 'path';
 import readline from 'readline';
 
-// Get roles from terminal arguments
-const args = process.argv.slice(2);
-if (args.length === 0) {
-    console.error('Please provide roles as terminal arguments, e.g., role1,role2,...\n');
-    process.exit(1);
-}
-const roles = args[0].split(',');
-
 // Define paths
 const prismaSchemaPath = path.join(__dirname, '../prisma', 'schema.prisma');
 const routesIndex = path.join(__dirname, '../src/routes', 'index.ts');
 const envPath = path.join(__dirname, '../', '.env');
 const envExamplePath = path.join(__dirname, '../', '.env.example');
 
+// Create a readline interface
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+// Prompt the user for roles
+const askRoles = (callback: (roles: string[]) => void) => {
+    rl.question("\nEnter roles (separated by commas): ", (answer) => {
+        const roles = answer.split(',').map(role => role.trim()).filter(Boolean);
+        if (roles.length === 0) {
+            console.error('No roles provided. Please enter at least one role.\n');
+            askRoles(callback); // Re-prompt if no roles are entered
+        } else {
+            callback(roles); // Proceed with roles
+        }
+    });
+};
+
 // Step 1: Update UserRolesEnum in Prisma schema
-const updateUserRolesEnum = (callback: () => void) => {
+const updateUserRolesEnum = (roles: string[], callback: () => void) => {
     fs.readFile(prismaSchemaPath, 'utf8', (err, data) => {
         if (err) return console.error('Error reading Prisma schema file:', err, '\n');
 
@@ -43,7 +54,7 @@ const updateUserRolesEnum = (callback: () => void) => {
 };
 
 // Step 2: Update JWTCheck in routes/index.ts
-const updateJWTCheck = (callback: () => void) => {
+const updateJWTCheck = (roles: string[], callback: () => void) => {
     fs.readFile(routesIndex, 'utf8', (err, data) => {
         if (err) return console.error('Error reading routes/index.ts file:', err, '\n');
 
@@ -76,11 +87,6 @@ const setupEnvFile = () => {
         console.log('.env file created successfully!\n');
 
         // Prompt for environment variable values
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        });
-
         const envValues: { [key: string]: string } = {};
         const questions = ['PORT', 'JWT_SECRET', 'DB_STRING', 'HOST'];
 
@@ -115,9 +121,11 @@ const setupEnvFile = () => {
     });
 };
 
-// Execute tasks sequentially
-updateUserRolesEnum(() => {
-    updateJWTCheck(() => {
-        setupEnvFile();
+// Execute tasks sequentially with user-provided roles
+askRoles((roles) => {
+    updateUserRolesEnum(roles, () => {
+        updateJWTCheck(roles, () => {
+            setupEnvFile();
+        });
     });
 });
