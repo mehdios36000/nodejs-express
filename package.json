@@ -1,6 +1,6 @@
 {
   "name": "nodejs-typescript-express-prisma",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A template for Node.js and Express with Prisma setup",
   "bin": {
     "your-template": "copyTemplate.js"
