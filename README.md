@@ -64,6 +64,17 @@ You can create new tables with corresponding routes, controllers, and services u
 yarn crud:generate [table_name] [field:type1,field:type2,...]
 ```
 
+After running this command:
+1. Define the schema for the new table in `schema.prisma`.
+2. Generate the Prisma client with:
+   ```bash
+   yarn prisma:generate
+   ```
+3. Apply the new schema changes to your database in development mode:
+   ```bash
+   yarn prisma:migrate dev
+   ```
+
 ### Field Types
 The following `Joi` types are supported for validation:
 - `string`: `string()`
@@ -84,10 +95,6 @@ By default, all generated routes require the `ADMIN` role for access. You can cu
 
 This template uses **JWT** for authentication. Ensure you set a strong `JWT_SECRET` value in the environment variables to secure token generation.
 
-Here's an addition to the `README.md` with a command to generate a `JWT_SECRET` using `bcrypt` in Node.js:
-
----
-
 ## Generating a JWT_SECRET
 
 To generate a secure `JWT_SECRET` for your environment, use the following command in your terminal:
@@ -96,9 +103,7 @@ To generate a secure `JWT_SECRET` for your environment, use the following comman
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-This will generate a  hash that can be used as your `JWT_SECRET`. Copy the output and paste it into your environment variable file under `JWT_SECRET`.
-
-
+This will generate a unique hash that can be used as your `JWT_SECRET`. Copy the output and paste it into your environment variable file under `JWT_SECRET`.
 
 ## Additional Resources
 
