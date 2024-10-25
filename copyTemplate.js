@@ -22,18 +22,16 @@ const copyTemplate = async (targetDir) => {
     console.log(`Template files copied to ${targetDir}`);
 };
 
-// Helper function to run commands sequentially
+// Helper function to run commands with user interaction enabled
 const runCommand = (command, cwd) => {
     return new Promise((resolve, reject) => {
         console.log(`\nRunning: ${command}`);
-        const process = exec(command, { cwd }, (error, stdout, stderr) => {
+        const process = exec(command, { cwd, stdio: 'inherit' }, (error) => {
             if (error) {
                 console.error(`Error executing ${command}:`, error.message);
                 reject(error);
                 return;
             }
-            if (stderr) console.error(`stderr from ${command}:`, stderr);
-            console.log(`stdout from ${command}:`, stdout);
             resolve();
         });
     });
@@ -55,7 +53,7 @@ const setup = async () => {
         await copyTemplate(targetDir);
         console.log('Template setup complete!');
 
-        // Run additional setup commands
+        // Run additional setup commands, allowing interaction for each command
         await runCommand('yarn install', targetDir);
         await runCommand('yarn init:prisma', targetDir);
         await runCommand('yarn prisma:generate', targetDir);
