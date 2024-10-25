@@ -1,43 +1,37 @@
 #!/usr/bin/env node
 const fs = require('fs-extra');
 const path = require('path');
-const readline = require('readline');
 const { spawn } = require('child_process');
+const chalk = require('chalk');
+const figlet = require('figlet');
+const inquirer = require('inquirer');
 
-// Create readline interface for prompting
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+// Display a banner
+console.log(chalk.blue(figlet.textSync("Project Setup", { horizontalLayout: "full" })));
 
-// Function to prompt for directory
-const askDirectory = (question) => {
-    return new Promise((resolve) => rl.question(question, resolve));
-};
-
-// Function to copy template files
+// Helper function to copy template files
 const copyTemplate = async (targetDir) => {
     const templateDir = path.join(__dirname, 'template');
     await fs.copy(templateDir, targetDir);
-    console.log(`Template files copied to ${targetDir}`);
+    console.log(chalk.cyan(`Template files copied to ${targetDir}`));
 };
 
 // Helper function to run commands with interactive input enabled
 const runCommand = (command, args, cwd) => {
     return new Promise((resolve, reject) => {
-        console.log(`\nRunning: ${command} ${args.join(' ')}`);
+        console.log(chalk.yellow(`\nRunning: ${command} ${args.join(' ')}`));
         
         // Spawn process with stdio set to inherit to allow user interaction
         const process = spawn(command, args, { cwd, stdio: 'inherit' });
 
         process.on('error', (error) => {
-            console.error(`Error executing ${command}:`, error.message);
+            console.error(chalk.red(`Error executing ${command}:`), error.message);
             reject(error);
         });
 
         process.on('close', (code) => {
             if (code !== 0) {
-                reject(new Error(`${command} exited with code ${code}`));
+                reject(new Error(chalk.red(`${command} exited with code ${code}`)));
             } else {
                 resolve();
             }
@@ -48,8 +42,12 @@ const runCommand = (command, args, cwd) => {
 // Main function to execute setup
 const setup = async () => {
     try {
-        const dirAnswer = await askDirectory('Enter destination folder (use "." for current directory): ');
-        rl.close();
+        // Use inquirer to prompt for the directory
+        const { dirAnswer } = await inquirer.createPromptModule()({
+            type: 'input',
+            name: 'dirAnswer',
+            message: chalk.green('Enter destination folder (use "." for current directory):'),
+        });
 
         const targetDir = path.resolve(dirAnswer === '.' ? process.cwd() : path.join(process.cwd(), dirAnswer));
         
@@ -59,17 +57,18 @@ const setup = async () => {
         }
 
         await copyTemplate(targetDir);
-        console.log('Template setup complete!');
+        console.log(chalk.cyan('Template setup complete!'));
 
         // Run additional setup commands, allowing interaction for each command
         await runCommand('yarn', ['install'], targetDir);
         await runCommand('yarn', ['init:prisma'], targetDir);
         await runCommand('yarn', ['prisma:generate'], targetDir);
         await runCommand('yarn', ['prisma:migrate'], targetDir);
+        await runCommand('yarn', ['fix:deps'], targetDir);
 
-        console.log('Project setup complete with all commands run successfully!');
+        console.log(chalk.green('Project setup complete with all commands run successfully!'));
     } catch (error) {
-        console.error('Error during setup:', error);
+        console.error(chalk.red('Error during setup:'), error);
     }
 };
 

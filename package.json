@@ -11,7 +11,10 @@
     "package.json"
   ],
   "dependencies": {
-    "fs-extra": "11.2.0"
+    "chalk": "^4.1.2",
+    "figlet": "^1.8.0",
+    "fs-extra": "11.2.0",
+    "inquirer": "^12.0.1"
   },
   "author": "Mehdi Alami Idrissi",
   "license": "MIT"
