@@ -8,23 +8,15 @@ import { envs } from "@config/vars";
 import APIError from "@utils/api-error";
 import  ERRORS  from "@utils/errors";
 
+
 export type UserLoginPayload = {
   id: string;
   email: string;
   name: string;
   role: UserRolesEnum;
-  oldPassword: string;
-  newPassword: string;
 };
 
-export type User = {
-  email: string;
-  name: string;
-  phoneNumber: string;
-  password: string;
 
-
-};
 
 
 
@@ -51,7 +43,7 @@ const updateShema = Joi.object({
   role: Joi.string().optional(),
 });
 
-const create = async (user:UserLoginPayload) => {
+const create = async (user:typeof schema) => {
   const { error, value } = schema.validate(user);
   if (error)
     throw new APIError({
@@ -66,7 +58,7 @@ const create = async (user:UserLoginPayload) => {
   return newUser;
 };
 
-const signUp = async (user:User) => {
+const signUp = async (user:typeof changePasswordSchema) => {
   await new Promise((resolve) => {
     setTimeout(resolve, 500);
   });
@@ -160,8 +152,8 @@ const remove = async (id:string) => {
   await prisma.user.delete({ where: { id } });
 };
 
-const resetPassword = async (payload:UserLoginPayload) => {
-  const { error } = changePasswordSchema.validate(payload);
+const resetPassword = async (payload:typeof changePasswordSchema) => {
+  const { error,value } = changePasswordSchema.validate(payload);
   if (error)
     throw new APIError({
       message: `Bad payload ${error.message}`,
@@ -169,26 +161,26 @@ const resetPassword = async (payload:UserLoginPayload) => {
     });
   const user = await prisma.user.findFirst({
     where: {
-      email: payload.email,
+      email: value.email,
       password: crypto
         .createHash("sha1")
-        .update(payload.oldPassword, "binary")
+        .update(value.oldPassword, "binary")
         .digest("hex"),
     },
   });
 
   if (!user)
     throw new APIError({
-      message: `No user found with following email ${payload.email}`,
+      message: `No user found with following email ${value.email}`,
       status: HttpStatus.NOT_FOUND,
     });
 
   await prisma.user.update({
-    where: { email: payload.email },
+    where: { email: value.email },
     data: {
       password: crypto
         .createHash("sha1")
-        .update(payload.newPassword, "binary")
+        .update(value.newPassword, "binary")
         .digest("hex"),
     },
   });

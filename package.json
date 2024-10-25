@@ -1,5 +1,5 @@
 {
-  "name": "nodejs-express",
+  "name": "nodejs-express-typescript-crud",
   "version": "1.0.0",
   "main": "src/index.js",
   "license": "MIT",
@@ -7,7 +7,11 @@
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node dist/index.js",
     "dev": "nodemon -r tsconfig-paths/register src/index.ts",
-    "crud:generate":"ts-node ./scripts/crud-creation.ts"
+    "crud:generate":"ts-node ./scripts/crud-creation.ts",
+    "init:prisma": "ts-node ./scripts/init-prisma.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^5.21.1",

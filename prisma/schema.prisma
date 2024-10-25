@@ -20,7 +20,7 @@ model User {
   password      String?        @db.VarChar(255)
   email         String?        @unique @db.VarChar(255)
   phoneNumber   String?        @default("0600000000") @map("phone_number") @db.VarChar(255)
-  role          UserRolesEnum? @default(DEFAULT)
+  role          UserRolesEnum? @default(ADMIN)
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
   @@map("users")
@@ -28,5 +28,5 @@ model User {
 
 
 enum UserRolesEnum {
-
+  ADMIN
 }

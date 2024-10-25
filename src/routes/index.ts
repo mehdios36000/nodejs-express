@@ -12,10 +12,7 @@ const router: Router = express.Router();
 
 router.get(
   "/is-logged",
-  JWTCheck([
-    UserRolesEnum.SHOP_OWNER,
-    UserRolesEnum.CUSTOMER
-  ]),
+  JWTCheck([UserRolesEnum.ADMIN]),
   (req: Request, res: Response): void => { res.sendStatus(HttpStatus.OK); return; }
 );
 router.use("/users", user);

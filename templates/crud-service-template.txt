@@ -3,15 +3,13 @@ import Joi from "joi";
 import APIError from "@utils/api-error";
 import prisma from "@config/database";
 
-export type __MODEL__ ={
-  __MODEL_VALUES__
-}
+
 
 const schema = Joi.object({
 __SCHEMA__
 });
 
-const create = async (__ENTITY__:__MODEL__) => {
+const create = async (__ENTITY__:typeof schema) => {
   const { error, value } = schema.validate(__ENTITY__);
   if (error) throw new APIError({ message: 'Bad payload', status: HttpStatus.BAD_REQUEST });
   const new__MODEL__ = await prisma.__MODEL__.create(value);
@@ -19,20 +17,20 @@ const create = async (__ENTITY__:__MODEL__) => {
 };
 
 const get = async (id:string) => {
-  const __ENTITY__ = await __MODEL__.findByPk(id);
+  const __ENTITY__ = await prisma.__MODEL__.findUnique({ where: { id } });
   if (!__ENTITY__) throw new APIError({ message: 'No such __ENTITY__', status: HttpStatus.NOT_FOUND });
   return __ENTITY__;
 };
 
 const getAll = async () => {
-  const __ENTITY__s = await __MODEL__.findAll();
+  const __ENTITY__s = await prisma.__MODEL__.findMany();
   return __ENTITY__s;
 };
 
-const update = async (id:string, payload) => {
+const update = async (id:string, payload:typeof schema) => {
   const { error, value } = schema.validate(payload);
   if (error) throw new APIError({ message: 'Bad payload', status: HttpStatus.BAD_REQUEST });
-  const updatedValue = await __MODEL__.update(value, { where: { id } });
+  const updatedValue = await prisma.__MODEL__.update({where: { id }, data:value});
   if (!updatedValue) throw new APIError({ message: 'Not Found', status: HttpStatus.NOT_FOUND});
   return updatedValue;
 };
@@ -40,7 +38,7 @@ const update = async (id:string, payload) => {
 const remove = async (id:string) => {
   const __ENTITY__ = await get(id);
   if (!__ENTITY__) throw new APIError({ message: 'No such __ENTITY__', status: HttpStatus.NOT_FOUND });
-  await __MODEL__.destroy({ where: { id } });
+  await prisma.__MODEL__.delete({ where: { id } });
 };
 
 export const __ENTITY__Service = {
