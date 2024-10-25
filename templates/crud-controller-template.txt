@@ -1,0 +1,39 @@
+import { HttpStatus } from "http-status-ts";
+import { __ENTITY__Service } from "@services/__ENTITY__"
+import { Request,Response } from "express";
+
+const create = async (req:Request, res:Response) => {
+  const new__ENTITY__ = await __ENTITY__Service.create(req.body);
+  res.status(HttpStatus.OK).json(new__ENTITY__);
+};
+
+const getAll = async (req:Request, res:Response) => {
+  const __ENTITY__s = await __ENTITY__Service.getAll();
+  res.status(HttpStatus.OK).json(__ENTITY__s);
+};
+
+const get = async (req:Request, res:Response) => {
+  const { id } = req.params;
+  const __ENTITY__ = await __ENTITY__Service.get(id);
+  res.status(HttpStatus.OK).json(__ENTITY__);
+};
+
+const update = async (req:Request, res:Response) => {
+  const { id } = req.params;
+  const __ENTITY__ = await __ENTITY__Service.update(id, req.body);
+  res.status(HttpStatus.OK).json(__ENTITY__);
+};
+
+const remove = async (req:Request, res:Response) => {
+  const { id } = req.params;
+  const __ENTITY__ = await __ENTITY__Service.remove(id);
+  res.status(HttpStatus.OK).json(__ENTITY__);
+};
+
+export const __ENTITY__Controller = {
+  create,
+  get,
+  getAll,
+  update,
+  remove,
+};

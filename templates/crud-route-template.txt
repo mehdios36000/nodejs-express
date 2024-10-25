@@ -1,0 +1,12 @@
+const express = require('express');
+import {__ENTITY__Controller} from '@controllers/__ENTITY__';
+
+const router = express.Router();
+
+router.post('/', __ENTITY__Controller.create);
+router.get('/:id', __ENTITY__Controller.get);
+router.get('/', __ENTITY__Controller.getAll);
+router.patch('/:id', __ENTITY__Controller.update);
+router.delete('/:id', __ENTITY__Controller.remove);
+
+export default router;

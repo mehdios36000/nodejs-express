@@ -1,0 +1,52 @@
+import { HttpStatus } from "http-status-ts";
+import Joi from "joi";
+import APIError from "@utils/api-error";
+import prisma from "@config/database";
+
+export type __MODEL__ ={
+  __MODEL_VALUES__
+}
+
+const schema = Joi.object({
+__SCHEMA__
+});
+
+const create = async (__ENTITY__:__MODEL__) => {
+  const { error, value } = schema.validate(__ENTITY__);
+  if (error) throw new APIError({ message: 'Bad payload', status: HttpStatus.BAD_REQUEST });
+  const new__MODEL__ = await prisma.__MODEL__.create(value);
+  return new__MODEL__;
+};
+
+const get = async (id:string) => {
+  const __ENTITY__ = await __MODEL__.findByPk(id);
+  if (!__ENTITY__) throw new APIError({ message: 'No such __ENTITY__', status: HttpStatus.NOT_FOUND });
+  return __ENTITY__;
+};
+
+const getAll = async () => {
+  const __ENTITY__s = await __MODEL__.findAll();
+  return __ENTITY__s;
+};
+
+const update = async (id:string, payload) => {
+  const { error, value } = schema.validate(payload);
+  if (error) throw new APIError({ message: 'Bad payload', status: HttpStatus.BAD_REQUEST });
+  const updatedValue = await __MODEL__.update(value, { where: { id } });
+  if (!updatedValue) throw new APIError({ message: 'Not Found', status: HttpStatus.NOT_FOUND});
+  return updatedValue;
+};
+
+const remove = async (id:string) => {
+  const __ENTITY__ = await get(id);
+  if (!__ENTITY__) throw new APIError({ message: 'No such __ENTITY__', status: HttpStatus.NOT_FOUND });
+  await __MODEL__.destroy({ where: { id } });
+};
+
+export const __ENTITY__Service = {
+  create,
+  get,
+  getAll,
+  update,
+  remove,
+};
