@@ -7,7 +7,6 @@ import inquirer from "inquirer";
 interface FieldOptions {
   isId: boolean;
   isUnique: boolean;
-  isRequired: boolean;
   default?: string;
   map?: string;
   length?: number;
@@ -29,15 +28,14 @@ const generatePrismaField = (
   if (options.isId) {
     fieldLine += " @id";
     if (type.toLowerCase() === "string") {
-      fieldLine += " @default(cuid())"; // Default cuid for string IDs
+      fieldLine += " @default(cuid())";
     } else if (type.toLowerCase() === "int") {
-      fieldLine += " @default(autoincrement())"; // Auto-increment for integer IDs
+      fieldLine += " @default(autoincrement())";
     }
   } else {
     if (options.isUnique) fieldLine += " @unique";
     if (options.default) fieldLine += ` @default(${options.default})`;
     if (options.map) fieldLine += ` @map("${options.map}")`;
-    if (options.isRequired) fieldLine += " @default(null)";
     if (options.length) fieldLine += ` @db.VarChar(${options.length})`;
     if (options.dbType) fieldLine += ` @db.${options.dbType}`;
   }
@@ -67,7 +65,6 @@ const createSchema = async (): Promise<void> => {
       fieldType,
       isId,
       isUnique,
-      isRequired,
       defaultValue,
       mapValue,
       length,
@@ -97,12 +94,6 @@ const createSchema = async (): Promise<void> => {
         when: (answers) => !answers.isId,
       },
       {
-        type: "confirm",
-        name: "isRequired",
-        message: chalk.green("Is this field required?"),
-        default: true,
-      },
-      {
         type: "input",
         name: "defaultValue",
         message: chalk.green("Enter default value (or leave blank if none):"),
@@ -117,13 +108,13 @@ const createSchema = async (): Promise<void> => {
         name: "length",
         message: chalk.green("Enter length for VarChar (if applicable, leave blank otherwise):"),
         filter: (value) => (value ? parseInt(value) : undefined),
-        when: (answers) => answers.fieldType.toLowerCase() === "string",
+        when: (answers) => answers.fieldType.toLowerCase() === "string" && !answers.isId,
       },
       {
         type: "input",
         name: "dbType",
         message: chalk.green("Enter custom database type (e.g., 'VarChar', 'Text', etc., or leave blank):"),
-        when: (answers) => answers.fieldType.toLowerCase() === "string" || answers.fieldType.toLowerCase() === "int",
+        when: (answers) => (answers.fieldType.toLowerCase() === "string" || answers.fieldType.toLowerCase() === "int") && !answers.isId,
       },
     ]);
 
@@ -131,7 +122,6 @@ const createSchema = async (): Promise<void> => {
       generatePrismaField(fieldName, fieldType, {
         isId,
         isUnique,
-        isRequired,
         default: defaultValue || undefined,
         map: mapValue || undefined,
         length,
