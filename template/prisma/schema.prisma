@@ -23,6 +23,12 @@ model User {
   role          UserRolesEnum? @default(ADMIN)
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
+  language      String?        @default("en") @map("language")
+  isVerified              Boolean        @default(false)
+  verificationCode        String?
+  verificationCodeExpiresAt DateTime?
+  verificationAttempts    Int            @default(0)
+
   @@map("users")
 }
 

@@ -45,4 +45,45 @@ const resetPassword = async (req:Request, res:Response) => {
   res.sendStatus(HttpStatus.OK);
 };
 
-export { create, get, getAll, login, remove, resetPassword, signUp, update };
+
+const refresh = async (req:Request, res:Response) => {
+  const token = req.headers.authorization;
+  const userId = req.body.userId;
+  if (!token) {
+    res.status(HttpStatus.BAD_REQUEST).json({ message: 'Authorization token is required' });
+    return;
+  }
+  const newToken = await userService.refresh(token, userId);
+  res.status(HttpStatus.OK).json(newToken);
+}
+
+const verifyEmail = async (req: Request, res: Response) => {
+  const { email, code } = req.body;
+  if (!email || !code) {
+    res.status(HttpStatus.BAD_REQUEST).json({ message: "Email and verification code are required" });
+    return;
+  }
+  try {
+    await userService.verifyEmail(email, code);
+    res.status(HttpStatus.OK).json({ message: "Email verified successfully" });
+  } catch (error) {
+    res.status(HttpStatus.BAD_REQUEST).json({ message: (error as Error).message });
+  }
+};
+
+
+const resendVerificationEmail = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(HttpStatus.BAD_REQUEST).json({ message: "Email is required" });
+    return;
+  }
+  try {
+    await userService.resendVerificationEmail(email);
+    res.status(HttpStatus.OK).json({ message: "Verification code resent successfully" });
+  } catch (error) {
+    res.status(HttpStatus.BAD_REQUEST).json({ message: (error as Error).message });
+  }
+};
+
+export { create, get, getAll, login, remove, resetPassword, signUp, update ,refresh,verifyEmail,resendVerificationEmail};

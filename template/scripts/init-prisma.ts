@@ -4,6 +4,7 @@ import readline from "readline";
 import chalk from "chalk";
 import figlet from "figlet";
 import inquirer from "inquirer";
+import crypto from "crypto";
 
 // Define paths
 const prismaSchemaPath = path.join(__dirname, '../prisma', 'schema.prisma');
@@ -87,13 +88,19 @@ const setupEnvFile = async () => {
             console.log(chalk.cyan(".env file created successfully!\n"));
         }
 
-        const envVariables = ["PORT", "JWT_SECRET", "DB_STRING", "HOST"];
+        const envVariables = ["PORT", "JWT_SECRET", "DB_STRING", "HOST","SMTP_HOST","SMTP_PORT","SMTP_USER","SMTP_PASS"];
         const envValues: { [key: string]: string } = {};
 
         console.log(chalk.yellow("\n--- ENVIRONMENT SETUP ---"));
         console.log("Please fill in the required environment variables below:");
 
         for (const variable of envVariables) {
+            if (variable === "JWT_SECRET") {
+                envValues[variable] = crypto.randomBytes(32).toString('hex');
+                console.log(chalk.green(`Generated JWT_SECRET: ${envValues[variable]}`));
+                continue;
+            }
+
             const { value } = await inquirer.prompt({
                 type: "input",
                 name: "value",
