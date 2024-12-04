@@ -48,7 +48,7 @@ const create = async (user: typeof schema) => {
 			status: StatusCodes.BAD_REQUEST,
 		});
 	value.password = crypto
-		.createHash("sha1")
+		.createHash("sha256")
 		.update(value.password, "binary")
 		.digest("hex");
 	const newUser = await prisma.user.create({ data: value });
@@ -78,7 +78,7 @@ const signUp = async (user: typeof schema) => {
 
 	value.email = value.email.toLowerCase();
 	value.password = crypto
-		.createHash("sha1")
+		.createHash("sha256")
 		.update(value.password, "binary")
 		.digest("hex");
 
@@ -113,7 +113,7 @@ const login = async ({
 		setTimeout(resolve, 1000);
 	});
 	const hashpassword = crypto
-		.createHash("sha1")
+		.createHash("sha256")
 		.update(password, "binary")
 		.digest("hex");
 	const user = await prisma.user.findFirst({
@@ -197,7 +197,7 @@ const resetPassword = async (payload: typeof changePasswordSchema) => {
 		where: {
 			email: value.email,
 			password: crypto
-				.createHash("sha1")
+				.createHash("sha256")
 				.update(value.oldPassword, "binary")
 				.digest("hex"),
 		},
@@ -213,7 +213,7 @@ const resetPassword = async (payload: typeof changePasswordSchema) => {
 		where: { email: value.email },
 		data: {
 			password: crypto
-				.createHash("sha1")
+				.createHash("sha256")
 				.update(value.newPassword, "binary")
 				.digest("hex"),
 		},

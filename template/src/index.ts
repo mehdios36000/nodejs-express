@@ -1,4 +1,5 @@
 import "express-async-errors";
+import { envs } from "@config/vars";
 import { errorHandler } from "@middlewares/error";
 import router from "@routes/index";
 import cors from "cors";
@@ -10,9 +11,12 @@ import { swaggerSpec } from "./docs/swagger";
 const app = express();
 
 // Middleware
+const corsOptions = {
+	origin: envs.corsOrigins?.split(","),
+};
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors());
+app.use(cors(corsOptions));
 
 // API Documentation
 if (process.env.NODE_ENV === "development") {
