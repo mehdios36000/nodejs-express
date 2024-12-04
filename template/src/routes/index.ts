@@ -1,19 +1,21 @@
+import JWTCheck from "@middlewares/auth";
 import { UserRolesEnum } from "@prisma/client";
-import express, { Router } from "express";
-import {HttpStatus }from "http-status-ts";
-import JWTCheck from '@middlewares/auth';
-import {Request, Response } from 'express';
+import express, { type Router } from "express";
+import type { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 
 import user from "@routes/user";
 // __IMPORT__
 
 const router: Router = express.Router();
 
-
 router.get(
-  "/is-logged",
-  JWTCheck([UserRolesEnum.ADMIN]),
-  (req: Request, res: Response): void => { res.sendStatus(HttpStatus.OK); return; }
+	"/is-logged",
+	JWTCheck([UserRolesEnum.ADMIN]),
+	(req: Request, res: Response): void => {
+		res.sendStatus(StatusCodes.OK);
+		return;
+	},
 );
 router.use("/users", user);
 // __ROUTE__

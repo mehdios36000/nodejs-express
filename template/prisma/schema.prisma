@@ -36,3 +36,4 @@ model User {
 enum UserRolesEnum {
   ADMIN
 }
+
