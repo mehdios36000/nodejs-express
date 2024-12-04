@@ -1,33 +1,199 @@
-import { HttpStatus } from "http-status-ts";
+import { StatusCodes } from "http-status-codes";
 import { __ENTITY__Service } from "@services/__ENTITY__"
-import { Request,Response } from "express";
+import type { Request, Response } from "express";
 
-const create = async (req:Request, res:Response) => {
+/**
+ * @swagger
+ * /__ENTITY__s:
+ *   post:
+ *     tags:
+ *       - __ENTITY__s
+ *     summary: Create a new __ENTITY__
+ *     description: Create a new __ENTITY__ with the provided data
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/__ENTITY__Input'
+ *     responses:
+ *       201:
+ *         description: __ENTITY__ created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/__ENTITY__'
+ *       400:
+ *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
+const create = async (req: Request, res: Response) => {
   const new__ENTITY__ = await __ENTITY__Service.create(req.body);
-  res.status(HttpStatus.OK).json(new__ENTITY__);
+  res.status(StatusCodes.CREATED).json(new__ENTITY__);
 };
 
-const getAll = async (req:Request, res:Response) => {
+/**
+ * @swagger
+ * /__ENTITY__s:
+ *   get:
+ *     tags:
+ *       - __ENTITY__s
+ *     summary: Get all __ENTITY__s
+ *     description: Retrieve a list of all __ENTITY__s
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of __ENTITY__s
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/__ENTITY__'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
+const getAll = async (req: Request, res: Response) => {
   const __ENTITY__s = await __ENTITY__Service.getAll();
-  res.status(HttpStatus.OK).json(__ENTITY__s);
+  res.status(StatusCodes.OK).json(__ENTITY__s);
 };
 
-const get = async (req:Request, res:Response) => {
+/**
+ * @swagger
+ * /__ENTITY__s/{id}:
+ *   get:
+ *     tags:
+ *       - __ENTITY__s
+ *     summary: Get __ENTITY__ by ID
+ *     description: Retrieve a single __ENTITY__ by its ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: __ENTITY__ ID
+ *     responses:
+ *       200:
+ *         description: __ENTITY__ found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/__ENTITY__'
+ *       404:
+ *         description: __ENTITY__ not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
+const get = async (req: Request, res: Response) => {
   const { id } = req.params;
   const __ENTITY__ = await __ENTITY__Service.get(id);
-  res.status(HttpStatus.OK).json(__ENTITY__);
+  res.status(StatusCodes.OK).json(__ENTITY__);
 };
 
-const update = async (req:Request, res:Response) => {
+/**
+ * @swagger
+ * /__ENTITY__s/{id}:
+ *   put:
+ *     tags:
+ *       - __ENTITY__s
+ *     summary: Update __ENTITY__
+ *     description: Update an existing __ENTITY__ by its ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: __ENTITY__ ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/__ENTITY__Input'
+ *     responses:
+ *       200:
+ *         description: __ENTITY__ updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/__ENTITY__'
+ *       404:
+ *         description: __ENTITY__ not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
+const update = async (req: Request, res: Response) => {
   const { id } = req.params;
   const __ENTITY__ = await __ENTITY__Service.update(id, req.body);
-  res.status(HttpStatus.OK).json(__ENTITY__);
+  res.status(StatusCodes.OK).json(__ENTITY__);
 };
 
-const remove = async (req:Request, res:Response) => {
+/**
+ * @swagger
+ * /__ENTITY__s/{id}:
+ *   delete:
+ *     tags:
+ *       - __ENTITY__s
+ *     summary: Delete __ENTITY__
+ *     description: Delete an existing __ENTITY__ by its ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: __ENTITY__ ID
+ *     responses:
+ *       200:
+ *         description: __ENTITY__ deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: __ENTITY__ deleted successfully
+ *       404:
+ *         description: __ENTITY__ not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
+const remove = async (req: Request, res: Response) => {
   const { id } = req.params;
   const __ENTITY__ = await __ENTITY__Service.remove(id);
-  res.status(HttpStatus.OK).json(__ENTITY__);
+  res.status(StatusCodes.OK).json(__ENTITY__);
 };
 
 export const __ENTITY__Controller = {

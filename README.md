@@ -17,28 +17,84 @@ Upon initialization, you will be prompted to provide specific project configurat
 1. **Roles**: Specify any custom roles you'd like to add, in addition to the default `ADMIN` role already configured in the schema. List roles in a comma-separated format, e.g., `ROLE1,ROLE2,...`.
 
 2. **Environment Variables**: You will be prompted to set up the following environment variables:
-   - `PORT`: The port number to run the Express server.
-   - `JWT_SECRET`: Secret key for JWT-based authentication.
-   - `DB_STRING`: PostgreSQL connection URI for Prisma.
-   - `HOST`: The root URL for the API.
+   - `NODE_ENV`: Environment (development/production)
+   - `PORT`: The port number to run the Express server
+   - `JWT_SECRET`: Secret key for JWT-based authentication (auto-generated)
+   - `DB_STRING`: PostgreSQL connection URI for Prisma
+   - `HOST`: The root URL for the API
+   - `SMTP_HOST`: SMTP server host for email
+   - `SMTP_PORT`: SMTP server port
+   - `SMTP_USER`: SMTP username
+   - `SMTP_PASS`: SMTP password
+   - `CORS_ORIGIN`: Allowed CORS origins
+   - `API_RATE_LIMIT`: Rate limiting per minute
 
-## Default Prisma Schema
+## Features
 
-The default Prisma schema includes a `User` model with predefined fields, including a role setup with `ADMIN` as the default. You can extend this schema according to your project needs.
+- ✨ Interactive CLI for CRUD operations
+- 🔒 JWT Authentication with role-based access
+- 📝 OpenAPI/Swagger documentation
+- 🚀 TypeScript support
+- 🗄️ Prisma ORM with PostgreSQL
+- ✅ Input validation with Joi
+- 🔍 Error handling middleware
+- 📧 Email integration
+- 🔄 API rate limiting
+- 🌐 CORS support
+- 📊 API monitoring
+
+## CRUD Operations
+
+### Generate New Module
+
+```bash
+yarn crud:generate
+```
+
+This interactive tool will guide you through:
+1. Entity name selection
+2. Field definitions with types
+3. Generation of:
+   - Controller with OpenAPI docs
+   - Service layer
+   - Routes
+   - Validation schemas
+   - TypeScript interfaces
+
+### Delete Existing Module
+
+```bash
+yarn crud:delete
+```
+
+This will:
+1. Show existing modules
+2. Remove selected files
+3. Clean up routes
+4. Update documentation
+
+### Available Field Types
+
+- `string`: String data type
+- `int`: Integer data type
+- `date`: Date with timestamp
+- `double`: Double/Float data type
+- `boolean`: Boolean data type
+- `id`: UUID primary key
+- `fid`: UUID foreign key
+- `array`: JSON array
+- `object`: JSON object
+- `text`: Text data type
+
+## API Documentation
+
+Documentation is automatically generated and available at:
+- Interactive UI: `http://localhost:3000/api-docs`
+- Raw OpenAPI spec: `http://localhost:3000/api-docs.json`
+
+## Default Schema
 
 ```prisma
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DB_STRING")
-}
-
 model User {
   id            String         @id @default(cuid())
   name          String?        @db.VarChar(255)
@@ -56,58 +112,42 @@ enum UserRolesEnum {
 }
 ```
 
-## CRUD Generation for New Tables
+## Project Structure
 
-You can create new tables with corresponding routes, controllers, and services using the command:
-
-```bash
-yarn crud:generate [table_name] [field:type1,field:type2,...]
+```
+src/
+├── config/         # Configuration files
+├── controllers/    # Route controllers
+├── docs/          # API documentation
+│   ├── swagger.ts # Swagger configuration
+│   └── *.yml     # API specifications
+├── middlewares/    # Custom middlewares
+├── routes/         # API routes
+├── services/      # Business logic
+├── utils/         # Utility functions
+└── index.ts       # Application entry point
 ```
 
-After running this command:
-1. Define the schema for the new table in `schema.prisma`.
-2. Generate the Prisma client with:
-   ```bash
-   yarn prisma:generate
-   ```
-3. Apply the new schema changes to your database in development mode:
-   ```bash
-   yarn prisma:migrate dev
-   ```
+## Scripts
 
-### Field Types
-The following `Joi` types are supported for validation:
-- `string`: `string()`
-- `int`: `number()`
-- `date`: `date()`
-- `double`: `number()`
-- `boolean`: `boolean()`
-- `id`: `string()`
-- `fid`: `string()`
-- `array`: `array()`
-- `text`: `string()`
-- `object`: `object()`
-
-### Route Access
-By default, all generated routes require the `ADMIN` role for access. You can customize access permissions as needed.
-
-## Authentication
-
-This template uses **JWT** for authentication. Ensure you set a strong `JWT_SECRET` value in the environment variables to secure token generation.
-
-## Generating a JWT_SECRET
-
-To generate a secure `JWT_SECRET` for your environment, use the following command in your terminal:
-
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```json
+{
+  "scripts": {
+    "dev": "nodemon -r tsconfig-paths/register src/index.ts",
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "start": "node dist/index.js",
+    "crud:generate": "ts-node ./scripts/crud-creation.ts",
+    "crud:delete": "ts-node ./scripts/crud-deletion.ts",
+    "init:prisma": "ts-node ./scripts/init-prisma.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  }
+}
 ```
 
-This will generate a unique hash that can be used as your `JWT_SECRET`. Copy the output and paste it into your environment variable file under `JWT_SECRET`.
+## Requirements
 
-## Additional Resources
-
-For more information, refer to:
-- [Prisma Documentation](https://pris.ly/d/prisma-schema)
-- [Express Documentation](https://expressjs.com/)
-- [jsonwebtoken Documentation](https://www.npmjs.com/package/jsonwebtoken)
+- Node.js v18 or higher
+- PostgreSQL
+- Yarn or npm

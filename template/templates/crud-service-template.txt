@@ -1,24 +1,22 @@
-import { HttpStatus } from "http-status-ts";
+import { StatusCodes } from "http-status-codes";
 import Joi from "joi";
 import APIError from "@utils/api-error";
 import prisma from "@config/database";
-
-
 
 const schema = Joi.object({
 __SCHEMA__
 });
 
-const create = async (__ENTITY__:typeof schema) => {
+const create = async (__ENTITY__: typeof schema) => {
   const { error, value } = schema.validate(__ENTITY__);
-  if (error) throw new APIError({ message: 'Bad payload', status: HttpStatus.BAD_REQUEST });
+  if (error) throw new APIError({ message: 'Bad payload', status: StatusCodes.BAD_REQUEST });
   const new__ENTITY__ = await prisma.__ENTITY__.create({ data: value });
   return new__ENTITY__;
 };
 
-const get = async (id:string) => {
+const get = async (id: string) => {
   const __ENTITY__ = await prisma.__ENTITY__.findUnique({ where: { id } });
-  if (!__ENTITY__) throw new APIError({ message: 'No such __ENTITY__', status: HttpStatus.NOT_FOUND });
+  if (!__ENTITY__) throw new APIError({ message: 'No such __ENTITY__', status: StatusCodes.NOT_FOUND });
   return __ENTITY__;
 };
 
@@ -27,17 +25,17 @@ const getAll = async () => {
   return __ENTITY__s;
 };
 
-const update = async (id:string, payload:typeof schema) => {
+const update = async (id: string, payload: typeof schema) => {
   const { error, value } = schema.validate(payload);
-  if (error) throw new APIError({ message: 'Bad payload', status: HttpStatus.BAD_REQUEST });
-  const updatedValue = await prisma.__ENTITY__.update({where: { id }, data:value});
-  if (!updatedValue) throw new APIError({ message: 'Not Found', status: HttpStatus.NOT_FOUND});
+  if (error) throw new APIError({ message: 'Bad payload', status: StatusCodes.BAD_REQUEST });
+  const updatedValue = await prisma.__ENTITY__.update({ where: { id }, data: value });
+  if (!updatedValue) throw new APIError({ message: 'Not Found', status: StatusCodes.NOT_FOUND });
   return updatedValue;
 };
 
-const remove = async (id:string) => {
+const remove = async (id: string) => {
   const __ENTITY__ = await get(id);
-  if (!__ENTITY__) throw new APIError({ message: 'No such __ENTITY__', status: HttpStatus.NOT_FOUND });
+  if (!__ENTITY__) throw new APIError({ message: 'No such __ENTITY__', status: StatusCodes.NOT_FOUND });
   await prisma.__ENTITY__.delete({ where: { id } });
 };
 

@@ -1,15 +1,37 @@
 import { PrismaClient } from "@prisma/client";
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  const prisma = new PrismaClient();
+
+  // Add Prisma Client Extensions
+  const extendedPrisma = prisma.$extends({
+    query: {
+      user: {
+        async create({ args, query }) {
+          if (args.data.email) {
+            args.data.email = args.data.email.toLowerCase();
+          }
+          return query(args);
+        },
+        async update({ args, query }) {
+          if (args.data.email) {
+            args.data.email = args.data.email.toString().toLowerCase();
+          }
+          return query(args);
+        },
+      },
+    },
+  });
+
+  return extendedPrisma;
 };
 
 declare const globalThis: {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
+  prismaGlobal?: ReturnType<typeof prismaClientSingleton>;
 };
 
 const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
 
-export default prisma;
 
-// if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+
+export default prisma;

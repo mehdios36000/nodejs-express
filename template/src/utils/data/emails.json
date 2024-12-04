@@ -1,0 +1,10 @@
+{
+    "en":{
+        "subject": "Email Verification",
+        "text": "<p style=\"font-size: 16px;\">Use the following code to verify your email:</p><p style=\"font-size: 24px;\"><b>{{code}}</b></p>"
+    },
+    "fr":{
+        "subject": "Vérification de l'email",
+        "text": "<p style=\"font-size: 16px;\">Utilisez le code suivant pour vérifier votre email:</p><p style=\"font-size: 24px;\"><b>{{code}}</b></p>"
+    }
+}

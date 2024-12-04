@@ -1,0 +1,139 @@
+openapi: 3.0.0
+paths:
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Login user
+      description: Authenticate a user and receive a JWT token
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: "********"
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /users/sign-up:
+    post:
+      tags:
+        - Users
+      summary: Register new user
+      description: Create a new user account
+      operationId: signUp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+                - phoneNumber
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: "********"
+                name:
+                  type: string
+                  example: "John Doe"
+                phoneNumber:
+                  type: string
+                  example: "0600000000"
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User created successfully
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/refresh:
+    post:
+      tags:
+        - Users
+      summary: Refresh token
+      description: Get a new access token using refresh token
+      operationId: refresh
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: New JWT token
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /is-logged:
+    get:
+      tags:
+        - Users
+      summary: Check if user is logged in
+      description: Verify if the current JWT token is valid
+      operationId: isLogged
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User is logged in
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' 
