@@ -1,21 +1,17 @@
 {
-  "name": "nodejs-typescript-express-prisma",
-  "version": "1.6.0",
-  "description": "A template for Node.js and Express with Prisma setup",
-  "bin": {
-    "your-template": "copyTemplate.js"
-  },
-  "files": [
-    "copyTemplate.js",
-    "template",
-    "package.json"
-  ],
-  "dependencies": {
-    "chalk": "^4.1.2",
-    "figlet": "^1.8.0",
-    "fs-extra": "11.2.0",
-    "inquirer": "^12.0.1"
-  },
-  "author": "Mehdi Alami Idrissi",
-  "license": "MIT"
+	"name": "nodejs-typescript-express-prisma",
+	"version": "1.6.1",
+	"description": "A template for Node.js and Express with Prisma setup",
+	"bin": {
+		"your-template": "copyTemplate.js"
+	},
+	"files": ["copyTemplate.js", "template", "package.json"],
+	"dependencies": {
+		"chalk": "^4.1.2",
+		"figlet": "^1.8.0",
+		"fs-extra": "11.2.0",
+		"inquirer": "^12.0.1"
+	},
+	"author": "Mehdi Alami Idrissi",
+	"license": "MIT"
 }
