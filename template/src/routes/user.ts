@@ -1,16 +1,19 @@
+import {
+	create,
+	get,
+	getAll,
+	login,
+	refresh,
+	remove,
+	resendVerificationEmail,
+	resetPassword,
+	signUp,
+	update,
+	verifyEmail,
+} from "@controllers/user";
+import JWTCheck from "@middlewares/auth";
 import { UserRolesEnum } from "@prisma/client";
 import express from "express";
-import JWTCheck from "@middlewares/auth";
-import {
-  create,
-  get,
-  getAll,
-  login,
-  remove,
-  resetPassword,
-  signUp,
-  update,
-} from "@controllers/user";
 
 const router = express.Router();
 
@@ -23,5 +26,7 @@ router.get("/:id", JWTCheck([UserRolesEnum.ADMIN]), get);
 router.get("/", JWTCheck([UserRolesEnum.ADMIN]), getAll);
 router.patch("/:id", JWTCheck([UserRolesEnum.ADMIN]), update);
 router.delete("/:id", JWTCheck([UserRolesEnum.ADMIN]), remove);
-
+router.post("/verify-email", verifyEmail);
+router.post("/resend-verification-email", resendVerificationEmail);
+router.post("/refresh", refresh);
 export default router;
